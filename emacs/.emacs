@@ -1,10 +1,18 @@
 ;; -*- mode: elisp -*-
 
+;; set the themes directory
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 ;; Disable the splash screen (to enable it agin, replace the t with 0)
 (setq inhibit-splash-screen t)
 
 ;; Enable transient mark mode
 (transient-mark-mode 1)
+
+
+;; set theme
+
+(load-theme 'atom-one-dark t)
 
 ;;;;Org mode configuration
 ;; Enable Org mode
@@ -31,21 +39,18 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; hoping this will work with the done taks now
-(defun org-archive-done-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from
-           (org-element-property :begin
-                                 (org-element-at-point))))
-   "/DONE" 'tree))
-   
- (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
- 
- (load-theme 'atom-one-dark t)
-
 ;; this bit of code is supposed to delete autosave files on manaul saving
 
 (setq delete-auto-save-files t)
+
+;; delete done tasks in org buffer
+
+(defun delete-all-done-tasks ()
+  "Delete all DONE tasks in the current buffer."
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (when (member (org-get-todo-state) '("DONE"))
+       (delete-region (point-at-bol) (1+ (point-at-eol)))))
+   "/DONE" 'file))
+
