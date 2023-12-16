@@ -9,9 +9,9 @@
 ;; Enable transient mark mode
 (transient-mark-mode 1)
 
-
+;; set tab bar-mode to always true
+(setq tab-bar-mode t)
 ;; set theme
-
 (load-theme 'atom-one-dark t)
 
 ;;;;Org mode configuration
@@ -38,8 +38,21 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+;; this changes the location of the auto-saves to save me from the clutter of auto-save files
+;; Directory where you want to save your auto-save files
+(defvar my-auto-save-directory (expand-file-name "~/emacs_auto_saves/"))
+
+;; Ensure the auto-save directory exists
+(unless (file-exists-p my-auto-save-directory)
+  (make-directory my-auto-save-directory t))
+
+;; Set up the transformation rules for auto-save files
+(setq auto-save-file-name-transforms
+      `((".*" ,my-auto-save-directory t)))
 
 ;; this bit of code is supposed to delete autosave files on manaul saving
+
+(setq make-backup-files nil)
 
 (setq delete-auto-save-files t)
 

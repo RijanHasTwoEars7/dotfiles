@@ -10,8 +10,6 @@ export PATH
 
 # <<< juliaup initialize <<<
 
-
-
 # sourcing plugins
 
 source /home/rijan/community_repos/zsh/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
@@ -53,5 +51,52 @@ function gitup() {
 
 uahvpn(){
 	sudo openconnect --protocol=nc -C "DSID="$1 psvpn.uah.edu
+}
+
+function newterim() {
+  mkdir -p "$1/blackbox"
+  mkdir -p "$1/input"
+  mkdir -p "$1/output"
+  touch "$1/README.md"
+}
+
+compress_directory() {
+    # Default compression level
+    local COMP_LEVEL=6
+
+    # Parse options
+    while getopts ":l:" opt; do
+        case ${opt} in
+            l)
+                COMP_LEVEL=$OPTARG
+                ;;
+            \?)
+                echo "Invalid option: -$OPTARG" >&2
+                return 1
+                ;;
+            :)
+                echo "Option -$OPTARG requires an argument." >&2
+                return 1
+                ;;
+        esac
+    done
+    shift $((OPTIND -1))
+
+    # Check if an argument is provided
+    if [ $# -ne 1 ]; then
+        echo "Usage: compress_directory [-l level] <directory>"
+        return 1
+    fi
+
+    # Get the directory name from the argument
+    local SOURCE_DIR="$1"
+
+    # Extract the basename of the directory
+    local BASENAME=$(basename "$SOURCE_DIR")
+
+    # Create a tar archive of the directory
+    tar -cvf - "$SOURCE_DIR" | zstd -$COMP_LEVEL -o "$BASENAME.tar.zst"
+
+    echo "Compressed archive saved as $BASENAME.tar.zst"
 }
 
